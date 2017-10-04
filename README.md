@@ -2,7 +2,7 @@
 Provides a numerical Laplace Transform function to CPython.  Allows for applying the Laplace Transform to arbitrary Python functions.
 
 ## Implementation
-The implementation uses the (Gauss-Laguerre quadrature)[https://en.wikipedia.org/wiki/Gauss%E2%80%93Laguerre_quadrature] to approximate the exact Laplace Transform integral.  Because this method is not always numerically stable, the generated functor is divergent from the true transform on part of the complex plane.
+The implementation uses the [Gauss-Laguerre quadrature](https://en.wikipedia.org/wiki/Gauss%E2%80%93Laguerre_quadrature) to approximate the exact Laplace Transform integral.  Because this method is not always numerically stable, the generated functor is divergent from the true transform on part of the complex plane.
 
 The goal of the implementation was to prioritize the accuracy of the approximation above speed and memory usage.  The roots of the first 100 Laguerre polynomials (needed to compute the numerical approximation) are precomputed in the interest of speed, however.  Higher `order` approximations can be particularly expensive because the implementation of the root-finding algorithm relies on an unproven (at least, I think it's unproven) but useful-in-practice property of Laguerre polynomial roots: that the roots of `n`th Laguerre polynomial interleave the roots of the `n+1`th Laguerre Polynomial.  So in order to compute (without precomputing the roots), say `laplace.LaplaceTransform(math.exp, order = 30)`, the root-finding algorithm would have to recursively bucket-brigade the root computation up from `order=1`.  This is why theres a `precomputed_laguerre_roots.cpp`  with a LOT of numbers in it. :)
 
