@@ -55,8 +55,8 @@ static int PyLaplaceObject_init(PyObject* self, PyObject* args, PyObject* kwargs
 	std::string order_kw{"order"};
 	char* keywords[3]{s_kw.data(), order_kw.data(), nullptr};
 	PyObject* function;
-	unsigned PY_LONG_LONG order{10};
-	if(not PyArg_ParseTupleAndKeywords(args, kwargs, "O|K", keywords, &function, &order))
+	Py_ssize_t order = 10;
+	if(not PyArg_ParseTupleAndKeywords(args, kwargs, "O|n", keywords, &function, &order))
 		return -1;
 	if(order < 1)
 	{
@@ -95,12 +95,12 @@ static PyObject* PyLaplaceObject_call(PyObject* self, PyObject* arg)
 		PyObject* real = PyNumber_Float(arg);
 		if(!real)
 			return nullptr;
-		num.real(PyFloat_AsDouble(real));
+		double s = PyFloat_AsDouble(real);
 		Py_DECREF(real);
-		if(num.real() == -1.0 and PyErr_Occurred())
+		if(s == -1.0 and PyErr_Occurred())
 			return nullptr;
-		num = slf->lt_(num);
-		return PyComplex_FromDoubles(num.real(), num.imag());	
+		num = slf->lt_(s);
+		return PyComplex_FromDoubles(num.real(), num.imag());
 	}
 	catch(const std::exception& e)
 	{
